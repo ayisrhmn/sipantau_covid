@@ -2,15 +2,15 @@ import 'dart:convert';
 
 class CovidIndoProv {
   String provinsi;
-  int confirmed;
-  int recovered;
-  int deaths;
+  dynamic confirmed;
+  dynamic recovered;
+  dynamic deaths;
 
   CovidIndoProv({
     this.provinsi = '',
-    this.confirmed = 0,
-    this.recovered = 0,
-    this.deaths = 0,
+    this.confirmed,
+    this.recovered,
+    this.deaths,
   });
 
   factory CovidIndoProv.fromJson(Map<String, dynamic> data) {

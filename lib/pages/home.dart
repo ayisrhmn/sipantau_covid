@@ -32,101 +32,60 @@ class _HomeState extends State<Home> {
         left: 15,
         right: 15,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Covid-19 di Indoneisa',
-            style: titleText.copyWith(
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          FutureBuilder(
-            future: apiService.getCovidIndo(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
+      child: FutureBuilder(
+        future: Future.wait(
+          [
+            apiService.getCovidIndo(),
+            apiService.getCovidIndoProv(),
+          ],
+        ),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 20,
+              ),
+              child: Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(
+                    color: primaryColor,
                   ),
-                  child: Center(
-                    child: Text(
-                      'Something wrong with message: ${snapshot.error.toString()}',
-                    ),
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+            );
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Covid-19 di Indonesia',
+                  style: titleText.copyWith(
+                    fontSize: 18,
                   ),
-                );
-              } else if (snapshot.hasData) {
-                List<CovidIndo> dataCovidIndo = snapshot.data;
-                return infoCardSection(dataCovidIndo);
-              } else {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                infoCardSection(snapshot.data[0]),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  'Covid-19 di Indonesia\nberdasarkan Provinsi',
+                  style: titleText.copyWith(
+                    fontSize: 16,
                   ),
-                  child: Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(
-                        color: primaryColor,
-                      ),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Text(
-            'Data Covid-19 di Indonesia\nberdasarkan Provinsi',
-            style: titleText.copyWith(
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          FutureBuilder(
-            future: apiService.getCovidIndoProv(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Something wrong with message: ${snapshot.error.toString()}',
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasData) {
-                List<CovidIndoProv> listCovidIndoProv = snapshot.data;
-                return dataTableSection(listCovidIndoProv);
-              } else {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
-                  child: Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(
-                        color: primaryColor,
-                      ),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                dataTableSection(snapshot.data[1]),
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -135,7 +94,6 @@ class _HomeState extends State<Home> {
     CovidIndo data = dataCovidIndo[0];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -244,7 +202,7 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.confirmed).toString(),
+                          formatter.format(e.confirmed ?? 0).toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -252,7 +210,7 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.recovered).toString(),
+                          formatter.format(e.recovered ?? 0).toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -260,7 +218,7 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.deaths).toString(),
+                          formatter.format(e.deaths ?? 0).toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
