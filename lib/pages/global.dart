@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_moment/simple_moment.dart';
 import 'package:sipantau_covid/model/covidglobal.dart';
 import 'package:sipantau_covid/model/covidglobal_confirmed.dart';
 import 'package:sipantau_covid/model/covidglobal_deaths.dart';
@@ -60,6 +61,17 @@ class _GlobalState extends State<Global> {
               ),
             );
           } else {
+            CovidGlobalConfirmed confirmed = snapshot.data[0];
+            CovidGlobalRecovered recovered = snapshot.data[1];
+            CovidGlobalDeaths deaths = snapshot.data[2];
+            List<CovidGlobal> listCovidGlobal = snapshot.data[3];
+
+            var converTimestamp = DateTime.fromMillisecondsSinceEpoch(
+              listCovidGlobal[0].lastUpdate,
+            );
+
+            Moment lastUpdate = Moment.parse(converTimestamp.toString());
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -69,11 +81,20 @@ class _GlobalState extends State<Global> {
                     fontSize: 18,
                   ),
                 ),
+                Text(
+                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                  style: subtitleText.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(
                   height: 15,
                 ),
                 infoCardSection(
-                    snapshot.data[0], snapshot.data[1], snapshot.data[2]),
+                  confirmed,
+                  recovered,
+                  deaths,
+                ),
                 const SizedBox(
                   height: 30,
                 ),
@@ -83,10 +104,16 @@ class _GlobalState extends State<Global> {
                     fontSize: 16,
                   ),
                 ),
+                Text(
+                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                  style: subtitleText.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(
                   height: 15,
                 ),
-                dataTableSection(snapshot.data[3]),
+                dataTableSection(listCovidGlobal),
               ],
             );
           }
@@ -138,7 +165,7 @@ class _GlobalState extends State<Global> {
     );
   }
 
-  Widget dataTableSection(List<CovidGlobal> listCovidGlobal) {
+  Widget dataTableSection(List<CovidGlobal> listData) {
     return Flexible(
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -183,15 +210,15 @@ class _GlobalState extends State<Global> {
                 ),
               ),
             ],
-            rows: listCovidGlobal
+            rows: listData
                 .map(
-                  (e) => DataRow(
+                  (data) => DataRow(
                     cells: [
                       DataCell(
                         SizedBox(
                           width: 120,
                           child: Text(
-                            e.country,
+                            data.country.toUpperCase(),
                             style: subtitleText.copyWith(
                               fontSize: 14,
                             ),
@@ -200,7 +227,11 @@ class _GlobalState extends State<Global> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.confirmed ?? 0).toString(),
+                          formatter
+                              .format(
+                                data.confirmed ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -208,7 +239,11 @@ class _GlobalState extends State<Global> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.recovered ?? 0).toString(),
+                          formatter
+                              .format(
+                                data.recovered ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -216,7 +251,11 @@ class _GlobalState extends State<Global> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.deaths).toString(),
+                          formatter
+                              .format(
+                                data.deaths ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),

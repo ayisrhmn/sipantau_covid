@@ -5,12 +5,14 @@ class CovidGlobal {
   dynamic confirmed;
   dynamic recovered;
   dynamic deaths;
+  dynamic lastUpdate;
 
   CovidGlobal({
     this.country = '',
     this.confirmed,
     this.recovered,
     this.deaths,
+    this.lastUpdate,
   });
 
   factory CovidGlobal.fromJson(Map<String, dynamic> data) {
@@ -19,6 +21,7 @@ class CovidGlobal {
       confirmed: data['attributes']['Confirmed'],
       recovered: data['attributes']['Recovered'],
       deaths: data['attributes']['Deaths'],
+      lastUpdate: data['attributes']['Last_Update'],
     );
   }
 
@@ -28,12 +31,13 @@ class CovidGlobal {
       'confirmed': confirmed,
       'recovered': recovered,
       'deaths': deaths,
+      'lastUpdate': lastUpdate,
     };
   }
 
   @override
   String toString() {
-    return 'CovidIndoProv{country: $country, confirmed: $confirmed, recovered: $recovered}, deaths: $deaths}';
+    return 'CovidIndoProv{country: $country, confirmed: $confirmed, recovered: $recovered}, deaths: $deaths, lastUpdate: $lastUpdate}';
   }
 }
 

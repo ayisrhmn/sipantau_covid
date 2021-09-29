@@ -3,22 +3,25 @@ import 'dart:convert';
 class CovidIndoProv {
   String provinsi;
   dynamic confirmed;
+  dynamic active;
   dynamic recovered;
   dynamic deaths;
 
   CovidIndoProv({
     this.provinsi = '',
     this.confirmed,
+    this.active,
     this.recovered,
     this.deaths,
   });
 
   factory CovidIndoProv.fromJson(Map<String, dynamic> data) {
     return CovidIndoProv(
-      provinsi: data['attributes']['Provinsi'],
-      confirmed: data['attributes']['Kasus_Posi'],
-      recovered: data['attributes']['Kasus_Semb'],
-      deaths: data['attributes']['Kasus_Meni'],
+      provinsi: data['provinsi'],
+      confirmed: data['kasus'],
+      active: data['dirawat'],
+      recovered: data['sembuh'],
+      deaths: data['meninggal'],
     );
   }
 
@@ -26,6 +29,7 @@ class CovidIndoProv {
     return {
       'provinsi': provinsi,
       'confirmed': confirmed,
+      'active': active,
       'recovered': recovered,
       'deaths': deaths,
     };
@@ -33,7 +37,7 @@ class CovidIndoProv {
 
   @override
   String toString() {
-    return 'CovidIndoProv{provinsi: $provinsi, confirmed: $confirmed, recovered: $recovered, deaths: $deaths}';
+    return 'CovidIndoProv{provinsi: $provinsi, confirmed: $confirmed, active: $active, recovered: $recovered, deaths: $deaths}';
   }
 }
 
