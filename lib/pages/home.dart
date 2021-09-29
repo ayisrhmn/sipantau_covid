@@ -5,6 +5,7 @@ import 'package:sipantau_covid/utils/api_service.dart';
 import 'package:sipantau_covid/theme.dart';
 import 'package:sipantau_covid/widgets/info_card.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_moment/simple_moment.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -56,6 +57,11 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
+            CovidIndo dataCovidIndo = snapshot.data[0];
+            List<CovidIndoProv> listCovidIndoProv = snapshot.data[1];
+
+            Moment lastUpdate = Moment.parse(dataCovidIndo.lastUpdate);
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -65,23 +71,35 @@ class _HomeState extends State<Home> {
                     fontSize: 18,
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                infoCardSection(snapshot.data[0]),
-                const SizedBox(
-                  height: 30,
-                ),
                 Text(
-                  'Covid-19 di Indonesia\nberdasarkan Provinsi',
-                  style: titleText.copyWith(
-                    fontSize: 16,
+                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                  style: subtitleText.copyWith(
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(
                   height: 15,
                 ),
-                dataTableSection(snapshot.data[1]),
+                infoCardSection(dataCovidIndo),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  'Covid-19 di Indonesia tiap Provinsi',
+                  style: titleText.copyWith(
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                  style: subtitleText.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                dataTableSection(listCovidIndoProv),
               ],
             );
           }
@@ -90,9 +108,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget infoCardSection(List<CovidIndo> dataCovidIndo) {
-    CovidIndo data = dataCovidIndo[0];
-
+  Widget infoCardSection(CovidIndo data) {
     return Column(
       children: [
         Row(
@@ -100,7 +116,11 @@ class _HomeState extends State<Home> {
             InfoCard(
               iconData: Icons.add_circle,
               iconColor: blueColor,
-              total: data.confirmed,
+              total: formatter
+                  .format(
+                    data.confirmed ?? 0,
+                  )
+                  .toString(),
               title: 'Terkonfirmasi',
             ),
             const SizedBox(
@@ -109,7 +129,11 @@ class _HomeState extends State<Home> {
             InfoCard(
               iconData: Icons.healing,
               iconColor: warningColor,
-              total: data.active,
+              total: formatter
+                  .format(
+                    data.active ?? 0,
+                  )
+                  .toString(),
               title: 'Kasus Aktif',
             ),
           ],
@@ -122,7 +146,11 @@ class _HomeState extends State<Home> {
             InfoCard(
               iconData: Icons.health_and_safety,
               iconColor: successColor,
-              total: data.recovered,
+              total: formatter
+                  .format(
+                    data.recovered ?? 0,
+                  )
+                  .toString(),
               title: 'Sembuh',
             ),
             const SizedBox(
@@ -131,7 +159,11 @@ class _HomeState extends State<Home> {
             InfoCard(
               iconData: Icons.remove_circle,
               iconColor: dangerColor,
-              total: data.deaths,
+              total: formatter
+                  .format(
+                    data.deaths ?? 0,
+                  )
+                  .toString(),
               title: 'Meninggal',
             ),
           ],
@@ -140,7 +172,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget dataTableSection(List<CovidIndoProv> listCovidIndoProv) {
+  Widget dataTableSection(List<CovidIndoProv> listData) {
     return Flexible(
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -170,6 +202,14 @@ class _HomeState extends State<Home> {
               ),
               DataColumn(
                 label: Text(
+                  'Kasus Aktif',
+                  style: titleText.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              DataColumn(
+                label: Text(
                   'Sembuh',
                   style: titleText.copyWith(
                     fontSize: 14,
@@ -185,15 +225,15 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ],
-            rows: listCovidIndoProv
+            rows: listData
                 .map(
-                  (e) => DataRow(
+                  (data) => DataRow(
                     cells: [
                       DataCell(
                         SizedBox(
                           width: 120,
                           child: Text(
-                            e.provinsi,
+                            data.provinsi.toUpperCase(),
                             style: subtitleText.copyWith(
                               fontSize: 14,
                             ),
@@ -202,7 +242,11 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.confirmed ?? 0).toString(),
+                          formatter
+                              .format(
+                                data.confirmed ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -210,7 +254,11 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.recovered ?? 0).toString(),
+                          formatter
+                              .format(
+                                data.active ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
@@ -218,7 +266,23 @@ class _HomeState extends State<Home> {
                       ),
                       DataCell(
                         Text(
-                          formatter.format(e.deaths ?? 0).toString(),
+                          formatter
+                              .format(
+                                data.recovered ?? 0,
+                              )
+                              .toString(),
+                          style: subtitleText.copyWith(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          formatter
+                              .format(
+                                data.deaths ?? 0,
+                              )
+                              .toString(),
                           style: subtitleText.copyWith(
                             fontSize: 14,
                           ),
