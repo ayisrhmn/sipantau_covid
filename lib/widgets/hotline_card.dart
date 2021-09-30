@@ -1,38 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:sipantau_covid/theme.dart';
-import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class HotlineCard extends StatelessWidget {
+class HotlineCard extends StatefulWidget {
   final String urlImage;
-  final String phoneCopied;
+  final String phoneUrl;
   final String phone;
   final String name;
 
   const HotlineCard({
     Key? key,
     required this.urlImage,
-    required this.phoneCopied,
+    required this.phoneUrl,
     required this.phone,
     required this.name,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Clipboard.setData(
-          ClipboardData(
-            text: phoneCopied,
-          ),
-        );
+  State<HotlineCard> createState() => _HotlineCardState();
+}
 
-        final snackBar = SnackBar(
-          content: Text(
-            '$name ($phone)\nCopy to clipboard',
-          ),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      },
+class _HotlineCardState extends State<HotlineCard> {
+  // ignore: unused_field
+  Future<void>? _launched;
+
+  Future<void> _makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: () => setState(() {
+        _launched = _makePhoneCall('tel:${widget.phoneUrl}');
+      }),
+      padding: const EdgeInsets.all(0),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -51,7 +57,7 @@ class HotlineCard extends StatelessWidget {
             Row(
               children: [
                 Image.asset(
-                  urlImage,
+                  widget.urlImage,
                   width: 50,
                   height: 50,
                 ),
@@ -62,13 +68,13 @@ class HotlineCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      phone,
+                      widget.phone,
                       style: titleText.copyWith(
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      name,
+                      widget.name,
                       style: subtitleText.copyWith(
                         fontSize: 14,
                       ),
