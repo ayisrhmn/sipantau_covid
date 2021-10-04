@@ -9,7 +9,7 @@
 ---
 
 <p align="center">
-    <img src="https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png" height="90px">
+    <img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/flutter-logo.png?raw=true" height="90px">
 </p>
 
 ## Table of Contents
@@ -69,24 +69,24 @@ SiPantau Covid App helps you to monitor Covid-19 Global & Indonesia.
 
 ## Screen
 
-<!-- <div align="center">
+<div align="center">
 
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-1-v1.6.0.jpg?raw=true" width="200" padding="100"/>
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-2-v1.6.0.jpg?raw=true" width="200" padding="100"/>
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-3-v1.6.0.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-1.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-2.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-3.jpg?raw=true" width="200" padding="100"/>
 
 </div>
 
 <div align="center">
 
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-5-v1.6.0.jpg?raw=true" width="200" padding="100"/>
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-6-v1.6.0.jpg?raw=true" width="200" padding="100"/>
-<img src="https://github.com/ayisrhmn/happymoney/blob/master/docs/images/ss-7-v1.6.0.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-4.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-5.jpg?raw=true" width="200" padding="100"/>
+<img src="https://github.com/ayisrhmn/sipantau_covid/blob/master/assets/docs/ss-6.jpg?raw=true" width="200" padding="100"/>
 
-</div> -->
+</div>
 
 ## Link SiPantau Covid APK (v1.0.0)
 
-<a href="https://drive.google.com/file/d/1tdQlbY8y_bM3gsYfJ2KDBHsl2SJ5XQrd/view?usp=sharing">
+<a href="https://drive.google.com/file/d/1Lltmro4oi1963TKoqrx0whUJ5tBYm47c/view?usp=sharing">
   <img src="https://img.shields.io/badge/Download%20on-Google%20Drive-gold.svg?style=popout&logo=google-drive"/>
 </a>
