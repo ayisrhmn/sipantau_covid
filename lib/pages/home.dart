@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sipantau_covid/model/covidindo.dart';
 import 'package:sipantau_covid/model/covidindo_prov.dart';
 import 'package:sipantau_covid/utils/api_service.dart';
@@ -41,69 +42,171 @@ class _HomeState extends State<Home> {
           ],
         ),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 20,
-              ),
-              child: Center(
-                child: SizedBox(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return shimmerLoading();
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            } else if (snapshot.hasData) {
+              CovidIndo dataCovidIndo = snapshot.data[0];
+              List<CovidIndoProv> listCovidIndoProv = snapshot.data[1];
+
+              Moment lastUpdate = Moment.parse(dataCovidIndo.lastUpdate);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Covid-19 di Indonesia',
+                    style: titleText.copyWith(
+                      fontSize: 18,
+                    ),
                   ),
-                  width: 50,
-                  height: 50,
-                ),
-              ),
-            );
+                  Text(
+                    'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                    style: subtitleText.copyWith(
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  infoCardSection(dataCovidIndo),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    'Covid-19 di Indonesia tiap Provinsi',
+                    style: titleText.copyWith(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                    style: subtitleText.copyWith(
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  dataTableSection(listCovidIndoProv),
+                ],
+              );
+            } else {
+              return const Text('Empty Data');
+            }
           } else {
-            CovidIndo dataCovidIndo = snapshot.data[0];
-            List<CovidIndoProv> listCovidIndoProv = snapshot.data[1];
-
-            Moment lastUpdate = Moment.parse(dataCovidIndo.lastUpdate);
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Covid-19 di Indonesia',
-                  style: titleText.copyWith(
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
-                  style: subtitleText.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                infoCardSection(dataCovidIndo),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'Covid-19 di Indonesia tiap Provinsi',
-                  style: titleText.copyWith(
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
-                  style: subtitleText.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                dataTableSection(listCovidIndoProv),
-              ],
-            );
+            return Text('State: ${snapshot.connectionState}');
           }
         },
+      ),
+    );
+  }
+
+  Widget shimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 198,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: 220,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          Column(
+            children: List.generate(2, (index) {
+              return Column(
+                children: [
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          height: 85,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Flexible(
+                        child: Container(
+                          height: 85,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            width: 282,
+            height: 18,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: 220,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Flexible(
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
