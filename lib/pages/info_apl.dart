@@ -40,7 +40,7 @@ class _InfoAplState extends State<InfoApl> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Info Aplikasi',
+              'Info Aplikasi (v1.0.1)',
               style: titleText.copyWith(
                 fontSize: 18,
               ),

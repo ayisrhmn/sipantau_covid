@@ -7,6 +7,7 @@ const Color blueColor = Color(0xff2c347c);
 const Color warningColor = Color(0xffceb546);
 const Color successColor = Color(0xff3c928c);
 const Color dangerColor = Color(0xffec6f58);
+const Color bodyColor = Color(0xfff4f4f4);
 
 TextStyle titleText = GoogleFonts.poppins(
   color: Colors.black87,

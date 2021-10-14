@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:simple_moment/simple_moment.dart';
 import 'package:sipantau_covid/model/covidglobal.dart';
 import 'package:sipantau_covid/model/covidglobal_confirmed.dart';
@@ -45,79 +46,192 @@ class _GlobalState extends State<Global> {
           ],
         ),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 20,
-              ),
-              child: Center(
-                child: SizedBox(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return shimmerLoading();
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            } else if (snapshot.hasData) {
+              CovidGlobalConfirmed confirmed = snapshot.data[0];
+              CovidGlobalRecovered recovered = snapshot.data[1];
+              CovidGlobalDeaths deaths = snapshot.data[2];
+              List<CovidGlobal> listCovidGlobal = snapshot.data[3];
+
+              var converTimestamp = DateTime.fromMillisecondsSinceEpoch(
+                listCovidGlobal[0].lastUpdate,
+              );
+
+              Moment lastUpdate = Moment.parse(converTimestamp.toString());
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Covid-19 Global',
+                    style: titleText.copyWith(
+                      fontSize: 18,
+                    ),
                   ),
-                  width: 50,
-                  height: 50,
-                ),
-              ),
-            );
+                  Text(
+                    'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                    style: subtitleText.copyWith(
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  infoCardSection(
+                    confirmed,
+                    recovered,
+                    deaths,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    'Covid-19 Global tiap Negara',
+                    style: titleText.copyWith(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
+                    style: subtitleText.copyWith(
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  dataTableSection(listCovidGlobal),
+                ],
+              );
+            } else {
+              return const Text('Empty Data');
+            }
           } else {
-            CovidGlobalConfirmed confirmed = snapshot.data[0];
-            CovidGlobalRecovered recovered = snapshot.data[1];
-            CovidGlobalDeaths deaths = snapshot.data[2];
-            List<CovidGlobal> listCovidGlobal = snapshot.data[3];
-
-            var converTimestamp = DateTime.fromMillisecondsSinceEpoch(
-              listCovidGlobal[0].lastUpdate,
-            );
-
-            Moment lastUpdate = Moment.parse(converTimestamp.toString());
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Covid-19 Global',
-                  style: titleText.copyWith(
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
-                  style: subtitleText.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                infoCardSection(
-                  confirmed,
-                  recovered,
-                  deaths,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'Covid-19 Global tiap Negara',
-                  style: titleText.copyWith(
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  'Update terakhir: ' + lastUpdate.format('dd MMMM yyyy'),
-                  style: subtitleText.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                dataTableSection(listCovidGlobal),
-              ],
-            );
+            return Text('State: ${snapshot.connectionState}');
           }
         },
+      ),
+    );
+  }
+
+  Widget shimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 148,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: 220,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            children: [
+              Flexible(
+                child: Container(
+                  height: 85,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Flexible(
+                child: Container(
+                  height: 85,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            children: [
+              Flexible(
+                child: Container(
+                  height: 85,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            width: 232,
+            height: 18,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: 220,
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Flexible(
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

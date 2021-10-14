@@ -34,6 +34,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bodyColor,
       body: SafeArea(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
